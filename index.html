@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Puzzle Game</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css?v=20260514-6">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="intro-panel" aria-labelledby="game-title">
+        <p class="eyebrow">Fruit Match</p>
+        <h1 id="game-title">Find the hidden fruit pairs</h1>
+        <p class="intro-copy">
+          Flip cards on the 4x4 board, remember their positions, and clear every matching fruit pair.
+        </p>
+
+        <div class="hint-box">
+          <p><strong>Goal</strong> Match all 8 pairs with fewer moves.</p>
+          <p><strong>Tip</strong> Watch the card positions before clicking too quickly.</p>
+        </div>
+      </section>
+
+      <section class="game-panel" aria-label="Fruit puzzle game">
+        <header class="game-header">
+          <p class="panel-label">Puzzle Board</p>
+          <p id="status" class="status">Find two matching fruit cards.</p>
+        </header>
+
+        <section class="score-panel" aria-label="Game score">
+          <div>
+            <span>Moves</span>
+            <strong id="moves">0</strong>
+          </div>
+          <div>
+            <span>Matches</span>
+            <strong id="matches">0 / 8</strong>
+          </div>
+          <div>
+            <span>Best</span>
+            <strong id="best-score">-</strong>
+          </div>
+        </section>
+
+        <section id="board" class="board" aria-label="Fruit puzzle board"></section>
+
+        <button id="restart-button" class="restart-button" type="button">Restart</button>
+      </section>
+    </main>
+
+    <script src="js/utils.js?v=20260514-7"></script>
+    <script src="js/board.js?v=20260514-7"></script>
+    <script src="js/game.js?v=20260514-7"></script>
+    <script src="js/app.js?v=20260514-7"></script>
+  </body>
+</html>
