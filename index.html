@@ -13,11 +13,11 @@
         <p class="eyebrow">Fruit Match</p>
         <h1 id="game-title">Sweet fruit memory party</h1>
         <p class="intro-copy">
-          Flip cards on the 6x6 board, remember their positions, and clear every matching fruit pair before time runs out.
+          Choose a board size, remember the hidden cards, and clear every matching fruit pair before time runs out.
         </p>
 
         <div class="hint-box">
-          <p><strong>Goal</strong> Match all 18 pairs before the timer reaches zero.</p>
+          <p><strong>Goal</strong> Match every pair before the timer reaches zero.</p>
           <p><strong>Tip</strong> The clock starts with your first card flip.</p>
         </div>
       </section>
@@ -28,10 +28,22 @@
           <p id="status" class="status">Find two matching fruit cards.</p>
         </header>
 
+        <section class="difficulty-panel" aria-label="Difficulty">
+          <button class="difficulty-button is-selected" type="button" data-difficulty="easy" aria-pressed="true">
+            Easy <span>4x4</span>
+          </button>
+          <button class="difficulty-button" type="button" data-difficulty="medium" aria-pressed="false">
+            Medium <span>8x8</span>
+          </button>
+          <button class="difficulty-button" type="button" data-difficulty="hard" aria-pressed="false">
+            Hard <span>16x16</span>
+          </button>
+        </section>
+
         <section class="score-panel" aria-label="Game score">
           <div class="timer-card">
             <span>Time</span>
-            <strong id="timer">01:30</strong>
+            <strong id="timer">01:00</strong>
           </div>
           <div>
             <span>Moves</span>
@@ -39,7 +51,7 @@
           </div>
           <div>
             <span>Matches</span>
-            <strong id="matches">0 / 18</strong>
+            <strong id="matches">0 / 8</strong>
           </div>
           <div>
             <span>Best</span>

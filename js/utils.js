@@ -1,8 +1,30 @@
 const GAME_CONFIG = {
-  columns: 6,
   revealDelayMs: 700,
-  timeLimitSeconds: 90,
-  bestScoreKey: "fruit-puzzle-6x6-best-score"
+  defaultDifficulty: "easy"
+};
+
+const DIFFICULTIES = {
+  easy: {
+    key: "easy",
+    label: "Easy",
+    columns: 4,
+    timeLimitSeconds: 60,
+    bestScoreKey: "fruit-puzzle-easy-best-score"
+  },
+  medium: {
+    key: "medium",
+    label: "Medium",
+    columns: 8,
+    timeLimitSeconds: 180,
+    bestScoreKey: "fruit-puzzle-medium-best-score"
+  },
+  hard: {
+    key: "hard",
+    label: "Hard",
+    columns: 16,
+    timeLimitSeconds: 600,
+    bestScoreKey: "fruit-puzzle-hard-best-score"
+  }
 };
 
 const FRUITS = [
@@ -32,7 +54,8 @@ function createFruitImage(fruit) {
       <rect width="120" height="120" rx="22" fill="#ffffff"/>
       <circle cx="60" cy="56" r="34" fill="${fruit.color}"/>
       <path d="M60 22 C63 13 71 9 80 10 C78 20 70 25 60 22Z" fill="#16a34a"/>
-      <text x="60" y="104" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#1f2937">${fruit.name}</text>
+      <text x="60" y="64" text-anchor="middle" font-family="Arial" font-size="22" font-weight="800" fill="#ffffff">${fruit.label}</text>
+      <text x="60" y="104" text-anchor="middle" font-family="Arial" font-size="12" font-weight="700" fill="#1f2937">${fruit.name}</text>
     </svg>
   `;
 
@@ -61,10 +84,37 @@ function shuffle(array) {
   return copiedArray;
 }
 
-function createCards() {
-  return shuffle([...FRUITS, ...FRUITS]).map(function (fruit, index) {
+function getDifficulty(key) {
+  return DIFFICULTIES[key] || DIFFICULTIES[GAME_CONFIG.defaultDifficulty];
+}
+
+function getPairCount(difficulty) {
+  return (difficulty.columns * difficulty.columns) / 2;
+}
+
+function createFruitSet(pairCount) {
+  return Array.from({ length: pairCount }, function (_, index) {
+    const baseFruit = FRUITS[index % FRUITS.length];
+    const variant = Math.floor(index / FRUITS.length) + 1;
+    const label = `${baseFruit.name.charAt(0)}${variant}`;
+
+    return {
+      pairKey: `${baseFruit.name}-${variant}`,
+      name: variant === 1 ? baseFruit.name : `${baseFruit.name} ${variant}`,
+      label,
+      color: baseFruit.color
+    };
+  });
+}
+
+function createCards(difficultyKey) {
+  const difficulty = getDifficulty(difficultyKey);
+  const fruits = createFruitSet(getPairCount(difficulty));
+
+  return shuffle([...fruits, ...fruits]).map(function (fruit, index) {
     return {
       id: String(index),
+      pairKey: fruit.pairKey,
       name: fruit.name,
       image: createFruitImage(fruit),
       flipped: false,
@@ -73,9 +123,11 @@ function createCards() {
   });
 }
 
-function getBestScore() {
+function getBestScore(difficultyKey) {
+  const difficulty = getDifficulty(difficultyKey);
+
   try {
-    const rawScore = localStorage.getItem(GAME_CONFIG.bestScoreKey);
+    const rawScore = localStorage.getItem(difficulty.bestScoreKey);
     const score = Number(rawScore);
 
     return Number.isFinite(score) && rawScore !== null ? score : null;
@@ -84,15 +136,16 @@ function getBestScore() {
   }
 }
 
-function saveBestScore(moves) {
-  const bestScore = getBestScore();
+function saveBestScore(difficultyKey, moves) {
+  const difficulty = getDifficulty(difficultyKey);
+  const bestScore = getBestScore(difficultyKey);
 
   if (bestScore !== null && moves >= bestScore) {
     return;
   }
 
   try {
-    localStorage.setItem(GAME_CONFIG.bestScoreKey, String(moves));
+    localStorage.setItem(difficulty.bestScoreKey, String(moves));
   } catch {
     return;
   }
@@ -101,7 +154,10 @@ function saveBestScore(moves) {
 window.GameUtils = {
   FRUITS,
   GAME_CONFIG,
+  DIFFICULTIES,
   createCards,
+  getDifficulty,
+  getPairCount,
   getBestScore,
   saveBestScore
 };

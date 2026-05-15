@@ -1,25 +1,31 @@
 const renderBoardView = window.GameBoard.renderBoard;
-const fruitList = window.GameUtils.FRUITS;
 const gameConfig = window.GameUtils.GAME_CONFIG;
+const difficultyConfig = window.GameUtils.DIFFICULTIES;
 const createFruitCards = window.GameUtils.createCards;
+const getDifficultySetting = window.GameUtils.getDifficulty;
+const countPairs = window.GameUtils.getPairCount;
 const readBestScore = window.GameUtils.getBestScore;
 const writeBestScore = window.GameUtils.saveBestScore;
 
-function createInitialState() {
+function createInitialState(difficultyKey) {
+  const difficulty = getDifficultySetting(difficultyKey);
+
   return {
     cards: [],
     selectedIds: [],
+    difficulty,
     locked: false,
     moves: 0,
     matches: 0,
-    timeLeft: gameConfig.timeLimitSeconds,
+    timeLeft: difficulty.timeLimitSeconds,
     timerStarted: false,
     completed: false
   };
 }
 
 function createGame(elements) {
-  let state = createInitialState();
+  let currentDifficultyKey = gameConfig.defaultDifficulty;
+  let state = createInitialState(currentDifficultyKey);
   let timerId = null;
   let revealTimeoutId = null;
 
@@ -28,13 +34,26 @@ function createGame(elements) {
   }
 
   function updateStats() {
-    const bestScore = readBestScore();
+    const totalPairs = countPairs(state.difficulty);
+    const bestScore = readBestScore(state.difficulty.key);
 
     elements.timerText.textContent = formatTime(state.timeLeft);
     elements.timerText.classList.toggle("is-low-time", state.timeLeft <= 15 && !state.completed);
     elements.movesText.textContent = state.moves;
-    elements.matchesText.textContent = `${state.matches} / ${fruitList.length}`;
+    elements.matchesText.textContent = `${state.matches} / ${totalPairs}`;
     elements.bestScoreText.textContent = bestScore === null ? "-" : String(bestScore);
+  }
+
+  function updateDifficultyView() {
+    elements.board.dataset.difficulty = state.difficulty.key;
+    elements.board.setAttribute("aria-label", `${state.difficulty.label} fruit puzzle board`);
+
+    elements.difficultyButtons.forEach(function (button) {
+      const isSelected = button.dataset.difficulty === state.difficulty.key;
+
+      button.classList.toggle("is-selected", isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
   }
 
   function formatTime(totalSeconds) {
@@ -45,7 +64,7 @@ function createGame(elements) {
   }
 
   function drawBoard() {
-    renderBoardView(elements.board, state.cards, gameConfig.columns);
+    renderBoardView(elements.board, state.cards, state.difficulty.columns);
   }
 
   function getCard(cardId) {
@@ -122,7 +141,7 @@ function createGame(elements) {
   function completeGame() {
     stopTimer();
     state.completed = true;
-    writeBestScore(state.moves);
+    writeBestScore(state.difficulty.key, state.moves);
     updateStats();
     updateStatus("Clear!");
   }
@@ -131,7 +150,7 @@ function createGame(elements) {
     const selectedCards = state.selectedIds.map(getCard);
     state.moves += 1;
 
-    if (selectedCards[0].name === selectedCards[1].name) {
+    if (selectedCards[0].pairKey === selectedCards[1].pairKey) {
       selectedCards.forEach(function (card) {
         patchCard(card.id, { matched: true });
       });
@@ -141,7 +160,7 @@ function createGame(elements) {
       updateStats();
       drawBoard();
 
-      if (state.matches === fruitList.length) {
+      if (state.matches === countPairs(state.difficulty)) {
         completeGame();
         return;
       }
@@ -189,18 +208,29 @@ function createGame(elements) {
     selectCard(button.dataset.id);
   }
 
+  function changeDifficulty(difficultyKey) {
+    if (!difficultyConfig[difficultyKey]) {
+      return;
+    }
+
+    currentDifficultyKey = difficultyKey;
+    start();
+  }
+
   function start() {
     stopTimer();
     clearRevealTimeout();
-    state = createInitialState();
-    state.cards = createFruitCards();
+    state = createInitialState(currentDifficultyKey);
+    state.cards = createFruitCards(state.difficulty.key);
 
-    updateStatus("Find two matching fruit cards.");
+    updateStatus(`Find all pairs on ${state.difficulty.columns}x${state.difficulty.columns}.`);
+    updateDifficultyView();
     updateStats();
     drawBoard();
   }
 
   return {
+    changeDifficulty,
     handleBoardClick,
     start
   };
