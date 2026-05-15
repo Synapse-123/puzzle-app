@@ -1,7 +1,7 @@
 const GAME_CONFIG = {
-  columns: 4,
+  columns: 6,
   revealDelayMs: 700,
-  bestScoreKey: "fruit-puzzle-best-score"
+  bestScoreKey: "fruit-puzzle-6x6-best-score"
 };
 
 const FRUITS = [
@@ -12,7 +12,17 @@ const FRUITS = [
   { name: "Berry", color: "#3b82f6" },
   { name: "Grape", color: "#8b5cf6" },
   { name: "Peach", color: "#fb7185" },
-  { name: "Melon", color: "#14b8a6" }
+  { name: "Melon", color: "#14b8a6" },
+  { name: "Cherry", color: "#dc2626" },
+  { name: "Banana", color: "#facc15" },
+  { name: "Kiwi", color: "#65a30d" },
+  { name: "Mango", color: "#fb923c" },
+  { name: "Plum", color: "#7c3aed" },
+  { name: "Pear", color: "#84cc16" },
+  { name: "Coconut", color: "#a16207" },
+  { name: "Fig", color: "#9333ea" },
+  { name: "Guava", color: "#f472b6" },
+  { name: "Papaya", color: "#f97316" }
 ];
 
 function createFruitImage(fruit) {

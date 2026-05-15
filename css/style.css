@@ -15,7 +15,7 @@ body {
 
 .app-shell {
   display: grid;
-  grid-template-columns: minmax(320px, 460px) minmax(360px, 460px);
+  grid-template-columns: minmax(300px, 420px) minmax(520px, 680px);
   align-items: center;
   justify-content: center;
   gap: 32px;
@@ -37,7 +37,7 @@ body {
 }
 
 .game-panel {
-  padding: 28px;
+  padding: 24px;
 }
 
 .eyebrow,
@@ -95,12 +95,12 @@ h1 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .score-panel div {
-  min-height: 76px;
-  padding: 16px;
+  min-height: 68px;
+  padding: 14px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.72);
 }
@@ -121,8 +121,8 @@ h1 {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
 }
 
 .card {
@@ -132,7 +132,7 @@ h1 {
   min-height: 0;
   place-items: center;
   border: 0;
-  border-radius: 14px;
+  border-radius: 10px;
   background: linear-gradient(145deg, #42524c, #26322e);
   box-shadow: 0 12px 22px rgba(36, 48, 44, 0.22);
   cursor: pointer;
@@ -143,7 +143,7 @@ h1 {
 .card::before {
   content: "?";
   color: #fffaf2;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 900;
 }
 
@@ -154,8 +154,8 @@ h1 {
 
 .card img {
   display: none;
-  width: 76%;
-  height: 76%;
+  width: 82%;
+  height: 82%;
   object-fit: contain;
 }
 
@@ -205,15 +205,32 @@ h1 {
     grid-template-columns: 1fr;
     padding: 24px;
   }
+
+  .game-panel {
+    width: min(100%, 680px);
+    justify-self: center;
+  }
 }
 
 @media (max-width: 520px) {
   .intro-panel,
   .game-panel {
-    padding: 22px;
+    padding: 18px;
   }
 
   .score-panel {
     grid-template-columns: 1fr;
+  }
+
+  .board {
+    gap: 6px;
+  }
+
+  .card {
+    border-radius: 8px;
+  }
+
+  .card::before {
+    font-size: 22px;
   }
 }
