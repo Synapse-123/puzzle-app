@@ -11,14 +11,14 @@
     <main class="app-shell">
       <section class="intro-panel" aria-labelledby="game-title">
         <p class="eyebrow">Fruit Match</p>
-        <h1 id="game-title">Find the hidden fruit pairs</h1>
+        <h1 id="game-title">Sweet fruit memory party</h1>
         <p class="intro-copy">
-          Flip cards on the 6x6 board, remember their positions, and clear every matching fruit pair.
+          Flip cards on the 6x6 board, remember their positions, and clear every matching fruit pair before time runs out.
         </p>
 
         <div class="hint-box">
-          <p><strong>Goal</strong> Match all 18 pairs with fewer moves.</p>
-          <p><strong>Tip</strong> Watch the card positions before clicking too quickly.</p>
+          <p><strong>Goal</strong> Match all 18 pairs before the timer reaches zero.</p>
+          <p><strong>Tip</strong> The clock starts with your first card flip.</p>
         </div>
       </section>
 
@@ -29,6 +29,10 @@
         </header>
 
         <section class="score-panel" aria-label="Game score">
+          <div class="timer-card">
+            <span>Time</span>
+            <strong id="timer">01:30</strong>
+          </div>
           <div>
             <span>Moves</span>
             <strong id="moves">0</strong>
@@ -45,7 +49,7 @@
 
         <section id="board" class="board" aria-label="Fruit puzzle board"></section>
 
-        <button id="restart-button" class="restart-button" type="button">Restart</button>
+        <button id="restart-button" class="restart-button" type="button">Play again</button>
       </section>
     </main>
 

@@ -2,6 +2,7 @@ function initApp() {
   const elements = {
     board: document.querySelector("#board"),
     statusText: document.querySelector("#status"),
+    timerText: document.querySelector("#timer"),
     movesText: document.querySelector("#moves"),
     matchesText: document.querySelector("#matches"),
     bestScoreText: document.querySelector("#best-score")
@@ -9,7 +10,7 @@ function initApp() {
 
   const restartButton = document.querySelector("#restart-button");
 
-  if (!elements.board || !elements.statusText || !elements.movesText || !elements.matchesText || !elements.bestScoreText || !restartButton) {
+  if (!elements.board || !elements.statusText || !elements.timerText || !elements.movesText || !elements.matchesText || !elements.bestScoreText || !restartButton) {
     return;
   }
 

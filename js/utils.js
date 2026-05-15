@@ -1,6 +1,7 @@
 const GAME_CONFIG = {
   columns: 6,
   revealDelayMs: 700,
+  timeLimitSeconds: 90,
   bestScoreKey: "fruit-puzzle-6x6-best-score"
 };
 

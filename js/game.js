@@ -12,12 +12,16 @@ function createInitialState() {
     locked: false,
     moves: 0,
     matches: 0,
+    timeLeft: gameConfig.timeLimitSeconds,
+    timerStarted: false,
     completed: false
   };
 }
 
 function createGame(elements) {
   let state = createInitialState();
+  let timerId = null;
+  let revealTimeoutId = null;
 
   function updateStatus(message) {
     elements.statusText.textContent = message;
@@ -26,9 +30,18 @@ function createGame(elements) {
   function updateStats() {
     const bestScore = readBestScore();
 
+    elements.timerText.textContent = formatTime(state.timeLeft);
+    elements.timerText.classList.toggle("is-low-time", state.timeLeft <= 15 && !state.completed);
     elements.movesText.textContent = state.moves;
     elements.matchesText.textContent = `${state.matches} / ${fruitList.length}`;
     elements.bestScoreText.textContent = bestScore === null ? "-" : String(bestScore);
+  }
+
+  function formatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
   function drawBoard() {
@@ -52,6 +65,51 @@ function createGame(elements) {
     state.locked = false;
   }
 
+  function stopTimer() {
+    if (timerId !== null) {
+      window.clearInterval(timerId);
+      timerId = null;
+    }
+  }
+
+  function clearRevealTimeout() {
+    if (revealTimeoutId !== null) {
+      window.clearTimeout(revealTimeoutId);
+      revealTimeoutId = null;
+    }
+  }
+
+  function endGameByTimeout() {
+    stopTimer();
+    clearRevealTimeout();
+    state.locked = true;
+    state.completed = true;
+    state.selectedIds = [];
+    state.cards = state.cards.map(function (card) {
+      return card.matched ? card : { ...card, flipped: false };
+    });
+
+    updateStats();
+    drawBoard();
+    updateStatus("Time's up! Try one more round.");
+  }
+
+  function startTimer() {
+    if (state.timerStarted) {
+      return;
+    }
+
+    state.timerStarted = true;
+    timerId = window.setInterval(function () {
+      state.timeLeft = Math.max(0, state.timeLeft - 1);
+      updateStats();
+
+      if (state.timeLeft === 0) {
+        endGameByTimeout();
+      }
+    }, 1000);
+  }
+
   function hideSelectedCards() {
     state.selectedIds.forEach(function (cardId) {
       patchCard(cardId, { flipped: false });
@@ -62,6 +120,7 @@ function createGame(elements) {
   }
 
   function completeGame() {
+    stopTimer();
     state.completed = true;
     writeBestScore(state.moves);
     updateStats();
@@ -94,7 +153,10 @@ function createGame(elements) {
     state.locked = true;
     updateStats();
     updateStatus("Try again.");
-    window.setTimeout(hideSelectedCards, gameConfig.revealDelayMs);
+    revealTimeoutId = window.setTimeout(function () {
+      revealTimeoutId = null;
+      hideSelectedCards();
+    }, gameConfig.revealDelayMs);
   }
 
   function selectCard(cardId) {
@@ -104,6 +166,7 @@ function createGame(elements) {
       return;
     }
 
+    startTimer();
     patchCard(cardId, { flipped: true });
     state.selectedIds.push(cardId);
     drawBoard();
@@ -127,6 +190,8 @@ function createGame(elements) {
   }
 
   function start() {
+    stopTimer();
+    clearRevealTimeout();
     state = createInitialState();
     state.cards = createFruitCards();
 
